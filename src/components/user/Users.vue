@@ -21,38 +21,21 @@
         </el-col>
       </el-row>
 
-      <el-table
-          :data="userList"
-          stripe
-          border
-          style="width: 100%">
-        <el-table-column
-            label="序号"
-            type="index">
+      <el-table :data="userList" stripe border style="width: 100%">
+        <el-table-column label="序号" type="index">
         </el-table-column>
-        <el-table-column
-            prop="username"
-            label="姓名">
+        <el-table-column prop="username" label="姓名">
         </el-table-column>
-        <el-table-column
-            prop="email"
-            label="邮箱">
+        <el-table-column prop="email" label="邮箱">
         </el-table-column>
-        <el-table-column
-            prop="mobile"
-            label="电话">
+        <el-table-column prop="mobile" label="电话">
         </el-table-column>
-        <el-table-column
-            prop="role_name"
-            label="角色">
+        <el-table-column prop="role_name" label="角色">
         </el-table-column>
-        <el-table-column
-            label="状态">
+        <el-table-column label="状态">
           <!-- 自定义列模板, 使用作用域插槽, 通过 scope.row 拿到当前行的数据-->
           <template slot-scope="scope">
-            <el-switch
-                v-model="scope.row.mg_state"
-                @change="userStateChange(scope.row)">
+            <el-switch v-model="scope.row.mg_state" @change="userStateChange(scope.row)">
             </el-switch>
           </template>
         </el-table-column>
@@ -66,7 +49,7 @@
               <el-button type="danger" icon="el-icon-delete" size="mini" @click="deleteUser(scope.row)"></el-button>
             </el-tooltip>
             <el-tooltip effect="dark" content="分配角色" placement="top" :enterable="false">
-              <el-button type="warning" icon="el-icon-setting" size="mini"></el-button>
+              <el-button type="warning" icon="el-icon-setting" size="mini" @click="showRoleDialog(scope.row)"></el-button>
             </el-tooltip>
           </template>
         </el-table-column>
@@ -86,6 +69,7 @@
       </div>
     </el-card>
 
+    <!-- 添加用户 -->
     <el-dialog
         title="添加用户"
         :visible.sync="dialogVisible"
@@ -106,16 +90,13 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="dialogVisible = false">取 消</el-button>
-    <el-button type="primary" @click="addUser">确 定</el-button>
-  </span>
+        <el-button @click="dialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="addUser">确 定</el-button>
+      </span>
     </el-dialog>
 
-    <el-dialog
-        title="修改用户信息"
-        :visible.sync="editUserDialog"
-        width="50%"
-        @close="editUserDialog = false">
+    <!-- 修改用户信息 -->
+    <el-dialog title="修改用户信息" :visible.sync="editUserDialog" width="50%" @close="editUserDialog = false">
       <el-form ref="editFormRef" :model="editForm" :rules="editFormRules" label-width="80px">
         <el-form-item label="用户名">
           <el-input v-model="editForm.username" disabled></el-input>
@@ -128,12 +109,31 @@
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-    <el-button @click="editUserDialog = false">取 消</el-button>
-    <el-button type="primary" @click="editUser">确 定</el-button>
-  </span>
+        <el-button @click="editUserDialog = false">取 消</el-button>
+        <el-button type="primary" @click="editUser">确 定</el-button>
+      </span>
     </el-dialog>
 
-
+    <!-- 分配用户 -->
+    <el-dialog title="分配用户" :visible.sync="roleUserDialog" width="50%" @close="setRoleDialog">
+      <div>
+        <p>当前用户名: {{ roleUserInfo.username }}</p>
+        <p>当前角色: {{ roleUserInfo.role_name }}</p>
+        分配新角色:
+        <el-select v-model="selectdRoleId" placeholder="请选择">
+          <el-option
+              v-for="item in rolesList"
+              :key="item.id"
+              :label="item.roleName"
+              :value="item.id">
+          </el-option>
+        </el-select>
+      </div>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="roleUserDialog = false">取 消</el-button>
+        <el-button type="primary" @click="alloRole">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -149,10 +149,12 @@ export default {
       },
       // 用户列表数据
       userList: [],
+      rolesList: [],
       // 数据总条数
       total: 0,
       dialogVisible: false,
       editUserDialog: false,
+      roleUserDialog: false,
       // 添加用户的表单对象
       addForm: {
         username: '',
@@ -161,6 +163,8 @@ export default {
         mobile: ''
       },
       editForm: {},
+      roleUserInfo: {},
+      selectdRoleId: null,
       // 添加用户的表单对象校验规则
       addFormRules: {
         username: [
@@ -314,7 +318,7 @@ export default {
           mobile: this.editForm.mobile
         })
         // console.log(res.data)
-        if (res.data.meta.status !== 200){
+        if (res.data.meta.status !== 200) {
           return this.$message({
             showClose: true,
             message: res.data.meta.msg,
@@ -331,7 +335,7 @@ export default {
       })
     },
 
-    deleteUser(userInfo){
+    deleteUser(userInfo) {
       const userSelfInfo = JSON.parse(sessionStorage.getItem('userInfo'))
       if (userSelfInfo.data.id === userInfo.id) {
         return this.$message.error("不允许删除自己账号")
@@ -355,6 +359,34 @@ export default {
           message: '已取消删除'
         });
       });
+    },
+
+
+    async showRoleDialog(userInfo) {
+      this.roleUserDialog = true
+      // console.log(userInfo)
+      this.roleUserInfo = userInfo
+      // 获取角色列表
+      const {data: res} = await this.$http.get('roles')
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      this.rolesList = res.data
+      console.log(this.rolesList)
+    },
+
+    setRoleDialog() {
+      this.selectdRoleId = null
+      this.roleUserInfo = {}
+    },
+
+    async alloRole() {
+      if (!this.selectdRoleId) return this.$message.warning("请选择角色")
+      const {data: res} = await this.$http.put(`users/${this.roleUserInfo.id}/role`, {rid: this.selectdRoleId})
+      console.log(res)
+      await this.getUserList()
+      if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
+      else
+        this.$message.success("设置成功")
+      this.roleUserDialog = false
     }
   }
 }
