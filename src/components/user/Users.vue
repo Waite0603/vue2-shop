@@ -347,7 +347,7 @@ export default {
       }).then(async () => {
         const res = await this.$http.delete(`users/${userInfo.id}`)
         if (res.data.meta.status !== 200) return this.$message.error(res.data.meta.msg)
-        console.log(res)
+        // console.log(res)
         this.$message({
           type: 'success',
           message: '删除成功!'
@@ -370,7 +370,7 @@ export default {
       const {data: res} = await this.$http.get('roles')
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       this.rolesList = res.data
-      console.log(this.rolesList)
+      // console.log(this.rolesList)
     },
 
     setRoleDialog() {
@@ -381,7 +381,7 @@ export default {
     async alloRole() {
       if (!this.selectdRoleId) return this.$message.warning("请选择角色")
       const {data: res} = await this.$http.put(`users/${this.roleUserInfo.id}/role`, {rid: this.selectdRoleId})
-      console.log(res)
+      // console.log(res)
       await this.getUserList()
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
       else
