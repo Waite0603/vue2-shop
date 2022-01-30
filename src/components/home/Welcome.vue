@@ -174,7 +174,7 @@ export default {
 
       console.log(this.orderList)
       // 将数据添加到option中
-      for (var key in data) {
+      for (let key in data) {
         option.xAxis.data.push(key)
         option.series[0].data.push(data[key])
       }
@@ -238,7 +238,7 @@ export default {
       })
 
       console.log(data)
-      for(var item of data){
+      for(let item of data){
         option.legend.data.push(item.name)
         option.series[0].data.push(item)
       }

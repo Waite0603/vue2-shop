@@ -25,13 +25,26 @@ Vue.use(VueQuillEditor, /* { default global options } */)
 import axios from "axios";
 // 配置基本路径
 axios.defaults.baseURL = 'http://www.tangxiaoyang.vip:8888/api/v2/'
+
+// 导入 nprogress
+import NProgress from 'nprogress'
+import 'nprogress/nprogress.css'
+
 // 拦截所有请求, 对每次请求头进行处理
 axios.interceptors.request.use(config => {
+    // 请求时开启进度条
+    NProgress.start()
     const userInfo = JSON.parse(sessionStorage.getItem('userInfo'))
     if (!userInfo) {
         return config
     }
     config.headers.Authorization = userInfo.data.token
+    return config
+})
+
+axios.interceptors.response.use(config => {
+    // 响应时结束进度度
+    NProgress.done()
     return config
 })
 
