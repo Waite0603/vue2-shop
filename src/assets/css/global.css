@@ -130,3 +130,83 @@ body,
 .el-pagination {
   margin-top: 15px;
 }
+.zk-table {
+  margin-top: 15px;
+  font-size: 12px;
+}
+.el-tag {
+  margin: 6px;
+  text-align: center;
+}
+.rolesExpand {
+  margin-left: 40px;
+  margin-right: 30px;
+}
+.bdBottom {
+  border-bottom: 1px solid #eee;
+}
+.bdTop {
+  border-top: 1px solid #eee;
+}
+.vcenter {
+  display: flex;
+  align-items: center;
+}
+.param_row {
+  display: flex;
+  align-items: center;
+  margin: 20px 20px 10px 0;
+}
+.param_row span {
+  margin-right: 10px;
+}
+.el-steps {
+  margin: 20px 0;
+}
+.el-step__title {
+  font-size: 13px;
+}
+.quill-editor {
+  min-height: 300px;
+  width: 90%;
+}
+.quill-editor .ql-editor {
+  min-height: 250px;
+}
+.tag-show .el-row {
+  padding: 0 9px;
+}
+.tag-show .el-row .statistics {
+  color: white;
+  height: 100px;
+  border-radius: 4px;
+  padding: 0 8px;
+}
+.tag-show .el-row .statistics .title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.tag-show .el-row .statistics .title p {
+  font-size: 13px;
+  font-weight: bold;
+}
+.tag-show .el-row .statistics .num {
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+.tag-show .el-row .statistics .tip {
+  font-size: 12px;
+}
+.tag-show .echarts-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+.tag-show .echarts-container .el-card {
+  height: 400px;
+  width: 50%;
+  margin: 0 8px;
+  padding: 20px;
+}

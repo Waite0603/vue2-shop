@@ -290,26 +290,5 @@ export default {
 </script>
 
 <style scoped>
-.el-tag {
-  margin: 6px;
-  text-align: center;
-}
 
-.rolesExpand {
-  margin-left: 40px;
-  margin-right: 30px;
-}
-
-.bdBottom {
-  border-bottom: 1px solid #eee;
-}
-
-.bdTop {
-  border-top: 1px solid #eee;
-}
-
-.vcenter {
-  display: flex;
-  align-items: center;
-}
 </style>

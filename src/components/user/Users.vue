@@ -115,12 +115,12 @@
     </el-dialog>
 
     <!-- 分配用户 -->
-    <el-dialog title="分配用户" :visible.sync="roleUserDialog" width="50%" @close="setRoleDialog">
+    <el-dialog title="分配用户" :visible.sync="roleUserDialog" width="30%" @close="setRoleDialog">
       <div>
         <p>当前用户名: {{ roleUserInfo.username }}</p>
         <p>当前角色: {{ roleUserInfo.role_name }}</p>
         分配新角色:
-        <el-select v-model="selectdRoleId" placeholder="请选择">
+        <el-select v-model="selectdRoleId" placeholder="请选择" size="mini">
           <el-option
               v-for="item in rolesList"
               :key="item.id"
@@ -131,7 +131,7 @@
       </div>
       <span slot="footer" class="dialog-footer">
         <el-button @click="roleUserDialog = false">取 消</el-button>
-        <el-button type="primary" @click="alloRole">确 定</el-button>
+        <el-button type="primary" @click="allotRole">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -227,7 +227,7 @@ export default {
       }
       this.userList = res.data.users
       this.total = res.data.total
-      // console.log(this.userList)
+      // console.log(this.total)
     },
 
     // 监听 pagesize 改变的事件
@@ -378,14 +378,12 @@ export default {
       this.roleUserInfo = {}
     },
 
-    async alloRole() {
+    async allotRole() {
       if (!this.selectdRoleId) return this.$message.warning("请选择角色")
       const {data: res} = await this.$http.put(`users/${this.roleUserInfo.id}/role`, {rid: this.selectdRoleId})
-      // console.log(res)
-      await this.getUserList()
       if (res.meta.status !== 200) return this.$message.error(res.meta.msg)
-      else
-        this.$message.success("设置成功")
+      this.$message.success("设置成功")
+      await this.getUserList()
       this.roleUserDialog = false
     }
   }
