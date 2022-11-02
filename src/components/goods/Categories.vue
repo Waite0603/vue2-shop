@@ -11,7 +11,7 @@
     <el-card>
       <el-row>
         <el-col>
-          <el-button type="primary" round @click="showAddDialog">添加商品</el-button>
+          <el-button type="primary" round @click="showAddDialog">添加分类</el-button>
         </el-col>
       </el-row>
 
@@ -48,9 +48,9 @@
       </div>
     </el-card>
 
-    <!-- 添加用户 -->
+    <!-- 添加分分类 -->
     <el-dialog
-        title="添加用户"
+        title="添加分类"
         :visible.sync="dialogVisible"
         width="50%"
         @close="addDialogClosed">
